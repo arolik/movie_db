@@ -5,8 +5,11 @@ import { Content, Header } from 'antd/lib/layout/layout';
 import React, { useEffect } from 'react';
 import './App.css';
 import MovieHeader from './components/MovieHeader';
+import MovieItem from './components/MovieItem';
+
 import { fetchFilms } from './store/FilmsReducer';
 import { useAppDispatch, useAppSelector } from './store/hooks';
+
 
 
 function App() {
@@ -14,39 +17,18 @@ function App() {
   const dispatch = useAppDispatch();
   const catalog = useAppSelector(state => state.films.results);
   useEffect(() => {
-    dispatch(fetchFilms())
-  }, [dispatch])
-
-
-console.log(catalog)
-
+    dispatch(fetchFilms());
+  }, [dispatch]);
+  console.log(catalog);
 
   return (
     <Col  xs={{span:22, offset:1}} md={{span:22}} >
       <MovieHeader/>
       <Content>
-        <Row justify='center' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
+        <Row justify='space-between' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
           {catalog?.map((film) => {
-            return <Col key={film.id} span={6}>
-              <Card  hoverable
-              cover={<img alt="text" src={`https://image.tmdb.org/t/p/w500${film.poster_path}`}/>}
-              >
-                <Meta title={film.original_title} description={film.overview} ></Meta>
-              </Card>
-            </Col>
+            return <MovieItem key={film.id} params={film} />
           })}
-          {/* <Col span={6} >
-            <Card 
-            hoverable 
-            cover={<img alt="text" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" ></img>}
-            
-            > 
-            <Meta title="text" description="second text" ></Meta>
-            </Card>
-          </Col> */}
-          
-
-          
         </Row>
         
       </Content>
