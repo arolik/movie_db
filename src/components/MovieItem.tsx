@@ -1,6 +1,9 @@
 import { Card, Col } from "antd";
 import Meta from "antd/lib/card/Meta";
+import { useEffect } from "react";
 import { large_logo } from "../path/pathes";
+import { fetchMovieInfo } from "../store/FilmsReducer";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import MovieItemDescription from "./MovieItemDescription";
 
 interface FilmIParamsI {
@@ -25,7 +28,12 @@ interface FilmItemI {
 }
 
 const MovieItem: React.FC<FilmItemI> = ({ params }) => {
+
+    const dispatch = useAppDispatch();
+    const id = params.id;
     
+    
+
     return <Col style={{ marginBottom: '20px' }} key={params.id} xs={{ span: 10 }} sm={{ span: 8 }} md={{ span: 6 }} lg={{ span: 4 }}>
         <Card
             hoverable

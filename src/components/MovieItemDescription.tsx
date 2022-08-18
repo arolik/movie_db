@@ -19,9 +19,15 @@ const MovieItemDescription: React.FC<DescriptionI> = ({date, title, id}) => {
     const [vissible, setVissible] = useState(false);
     const [size, setSize] = useState<DrawerProps['size']>();
     const [trailerId, setTrailerId] = useState('');
-    const film = useAppSelector(state => state.films.film_info);
+    const movies = useAppSelector(state => state.films.trailers.find((t) => {
+        return t.id_film === id;
+    }));
     
-    console.log(film);
+    
+    
+    useEffect(() => {
+        dispatch(fetchMovieInfo({id}))
+    }, [dispatch] )
 
     function showDetails () {
         setSize('large')
@@ -34,14 +40,12 @@ const MovieItemDescription: React.FC<DescriptionI> = ({date, title, id}) => {
     }
 
     function findTrailer (){
-        
-        const item = film?.results.find(t => t.name === 'Official Trailer');
-        if(item) {
-            setTrailerId(item.key);
-        }
-        console.log(item);
+          let trailer = movies?.videos.find(t => t.name === 'Official Trailer');
+          if(trailer){
+            setTrailerId(trailer.key);
+          }
+          
     }
-
 
     return (
         <>

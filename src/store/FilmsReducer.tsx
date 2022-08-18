@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_KEY, mainpath } from "../path/pathes";
 
-
 interface ResultsI {
     poster_path: string | null,
     abult: boolean,
@@ -19,16 +18,16 @@ interface ResultsI {
     vote_average: number
 }
 
-interface PageI {
+interface PageResponseI {
     page: number | null ,
     results: Array<ResultsI> | null ,
     total_results: number | null,
     total_pages: number | null,
-    film_info: FilmVideosI
 }
 
-interface VideoItemInfoI {
-    id: string,
+/**/
+
+interface TrailerItemI {
     iso_639_1: string,
     iso_3166_1: string,
     name: string,
@@ -38,10 +37,22 @@ interface VideoItemInfoI {
     size: number,
     type: string,
     official: boolean,
+    id: string
 }
 
-interface FilmVideosI {
-    results: Array<VideoItemInfoI>
+interface FilmTrailerI {
+    id_film: number | null,
+    videos: Array<TrailerItemI>
+}
+
+/**/ 
+
+interface PageI {
+    page: number | null,
+    results: Array<ResultsI> | null,
+    total_results: number | null,
+    total_pages: number | null,
+    trailers: Array<FilmTrailerI>
 }
 
 const initialState: PageI = {
@@ -49,12 +60,22 @@ const initialState: PageI = {
     results: [],
     total_results: null,
     total_pages: null,
-    film_info: {
-            results: []
-    }
+    trailers: []
 }
 
-export const fetchFilms = createAsyncThunk<PageI, undefined, { rejectValue: string }>(
+/**/ 
+
+interface FetchTrailerI {
+    id: number,
+    videos: {
+        results: Array<TrailerItemI>
+    }
+    
+}
+
+/**/ 
+
+export const fetchFilms = createAsyncThunk<PageResponseI, undefined, { rejectValue: string }>(
     'films/fetchFilms',
     async function (_, { rejectWithValue, dispatch } ) {
         const response = await fetch(mainpath);
@@ -66,26 +87,25 @@ export const fetchFilms = createAsyncThunk<PageI, undefined, { rejectValue: stri
     }
 );
 
-export const fetchMovieInfo = createAsyncThunk<FilmVideosI, {id:number}, { rejectValue: string}> (
+export const fetchMovieInfo = createAsyncThunk<FetchTrailerI, {id:number}, { rejectValue: string}> (
     'films/fetchMovieTrailer',
-    async function({id}, {rejectWithValue, dispatch }){
+    async function({id}, {rejectWithValue}){
+        
         const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&append_to_response=videos`);
         if(!response.ok){
             return rejectWithValue('oops server error')
         }
         const data = await response.json();
-        return data.videos;
+        
+        return data as FetchTrailerI ;
     }
 );
     
-
-
 const FilmsSlice = createSlice({
     name: 'films',
     initialState,
     reducers:{
         setCatalog(state, action){
-            
         }
     },
     extraReducers: (builder) => {
@@ -95,9 +115,19 @@ const FilmsSlice = createSlice({
             state.results = action.payload.results;
             state.total_pages = action.payload.total_pages;
             state.total_results = action.payload.total_results;
+            if(action.payload.results){
+                for(let i=0; i<action.payload.results?.length; i++){
+                    state.trailers.push({id_film: action.payload.results[i].id, videos: []});
+                }
+            }
         })
         .addCase(fetchMovieInfo.fulfilled, (state, action) => {
-            state.film_info = action.payload;
+            for(let i=0; i<state.trailers.length; i++){
+                if(state.trailers[i].id_film === action.payload.id){
+                    state.trailers[i].videos = action.payload.videos.results;
+                }
+            }
+            
         })
     }
 })

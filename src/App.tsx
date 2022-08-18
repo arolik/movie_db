@@ -16,20 +16,26 @@ function App() {
 
   const dispatch = useAppDispatch();
   const catalog = useAppSelector(state => state.films.results);
+  const a = useAppSelector(state => state.films);
   useEffect(() => {
     dispatch(fetchFilms());
   }, [dispatch]);
-  console.log(catalog);
+  
+
+
+  
+  
 
   return (
     <Col  xs={{span:22, offset:1}} md={{span:22}} >
       <MovieHeader/>
       <Content>
-        <Row justify='space-between' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
+        
+         <Row justify='space-between' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
           {catalog?.map((film) => {
             return <MovieItem key={film.id} params={film} />
           })}
-        </Row>
+        </Row> 
         
       </Content>
     </Col>
