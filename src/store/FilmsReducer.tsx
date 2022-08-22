@@ -40,9 +40,18 @@ interface TrailerItemI {
     id: string
 }
 
-interface FilmTrailerI {
+interface DetailsFilmI {
     id_film: number | null,
-    videos: Array<TrailerItemI>
+    budget_film?: number,
+    genres_film?: Array<GenreI>,
+    videos: Array<TrailerItemI>,
+    backdrop_path?: string
+    runtime?: number
+}
+
+interface GenreI {
+    id: number,
+    name: string
 }
 
 /**/ 
@@ -52,7 +61,7 @@ interface PageI {
     results: Array<ResultsI> | null,
     total_results: number | null,
     total_pages: number | null,
-    trailers: Array<FilmTrailerI>
+    details: Array<DetailsFilmI>
 }
 
 const initialState: PageI = {
@@ -60,34 +69,39 @@ const initialState: PageI = {
     results: [],
     total_results: null,
     total_pages: null,
-    trailers: []
+    details: []
 }
 
 /**/ 
 
-interface FetchTrailerI {
+interface FetchDeatailsFilmI {
     id: number,
+    budget: number,
+    genres: Array<GenreI>,
     videos: {
         results: Array<TrailerItemI>
-    }
-    
+    },
+    backdrop_path: string,
+    runtime: number
 }
 
 /**/ 
 
-export const fetchFilms = createAsyncThunk<PageResponseI, undefined, { rejectValue: string }>(
+export const fetchFilms = createAsyncThunk<PageResponseI, {page:number}, { rejectValue: string }>(
     'films/fetchFilms',
-    async function (_, { rejectWithValue, dispatch } ) {
-        const response = await fetch(mainpath);
+    async function ({page}, { rejectWithValue, dispatch } ) {
+        let path = `https://api.themoviedb.org/3/movie/popular?api_key=0d21d03fa55c1acdc8b0bc753a955437&language=en-US&page=${page}`;
+        const response = await fetch(path);
         if(!response.ok){
             return rejectWithValue('oops')
         }
         const data = await response.json();
+        console.log(data);
         return data;
     }
 );
 
-export const fetchMovieInfo = createAsyncThunk<FetchTrailerI, {id:number}, { rejectValue: string}> (
+export const fetchMovieInfo = createAsyncThunk<FetchDeatailsFilmI, {id:number}, { rejectValue: string}> (
     'films/fetchMovieTrailer',
     async function({id}, {rejectWithValue}){
         
@@ -97,7 +111,7 @@ export const fetchMovieInfo = createAsyncThunk<FetchTrailerI, {id:number}, { rej
         }
         const data = await response.json();
         
-        return data as FetchTrailerI ;
+        return data as FetchDeatailsFilmI;
     }
 );
     
@@ -117,14 +131,18 @@ const FilmsSlice = createSlice({
             state.total_results = action.payload.total_results;
             if(action.payload.results){
                 for(let i=0; i<action.payload.results?.length; i++){
-                    state.trailers.push({id_film: action.payload.results[i].id, videos: []});
+                    state.details.push({id_film: action.payload.results[i].id, videos: []});
                 }
             }
         })
         .addCase(fetchMovieInfo.fulfilled, (state, action) => {
-            for(let i=0; i<state.trailers.length; i++){
-                if(state.trailers[i].id_film === action.payload.id){
-                    state.trailers[i].videos = action.payload.videos.results;
+            for(let i=0; i<state.details.length; i++){
+                if(state.details[i].id_film === action.payload.id){
+                    state.details[i].videos = action.payload.videos.results;
+                    state.details[i].budget_film = action.payload.budget;
+                    state.details[i].genres_film = action.payload.genres;
+                    state.details[i].backdrop_path = action.payload.backdrop_path;
+                    state.details[i].runtime = action.payload.runtime;
                 }
             }
             

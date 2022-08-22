@@ -31,8 +31,6 @@ const MovieItem: React.FC<FilmItemI> = ({ params }) => {
 
     const dispatch = useAppDispatch();
     const id = params.id;
-    
-    
 
     return <Col style={{ marginBottom: '20px' }} key={params.id} xs={{ span: 10 }} sm={{ span: 8 }} md={{ span: 6 }} lg={{ span: 4 }}>
         <Card
@@ -40,8 +38,7 @@ const MovieItem: React.FC<FilmItemI> = ({ params }) => {
             cover={<img alt="text" src={`${large_logo}${params.poster_path}`} />}
         >
             <Meta title={params.original_title}
-                description={<MovieItemDescription date={params.release_date}
-                    title={params.title} id={params.id}
+                description={<MovieItemDescription info={params}
                 />}></Meta>
         </Card>
         <div>

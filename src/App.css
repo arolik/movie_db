@@ -1,8 +1,10 @@
 
 .movie_header {
     height: auto;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
-
+.movie_content {
+    margin-top: 1rem;
+}
 
