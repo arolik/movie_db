@@ -38,7 +38,6 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
     }));
     const id = info.id;
 
-    console.log(movie);
     useEffect(() => {
         dispatch(fetchMovieInfo({ id }))
     }, [dispatch])
@@ -65,7 +64,7 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
             <p><Text type="secondary">Release date: </Text><Text type="success">{info.release_date}</Text></p>
             <Space>
                 <Button type="primary" shape="round" onClick={showDetails} >  show details</Button>
-                <Drawer title={info.title} visible={vissible} size={size} onClose={closeDetails}>
+                <Drawer title={info.title} visible={vissible} size={size}  onClose={closeDetails}>
                     <Button style={{marginBottom:'20px'}} type="primary" onClick={findTrailer} >show trailer</Button>
                     <YouTube videoId={trailerId} />
                     <Title level={4}>{info.title}</Title>

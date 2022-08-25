@@ -1,10 +1,16 @@
 
 .movie_header {
     height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .movie_content {
     margin-top: 1rem;
 }
 
+.movie_slide {
+    
+   height: 500px;
+   background-size: cover;
+   background-position: center center;
+}

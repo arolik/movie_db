@@ -61,7 +61,8 @@ interface PageI {
     results: Array<ResultsI> | null,
     total_results: number | null,
     total_pages: number | null,
-    details: Array<DetailsFilmI>
+    details: Array<DetailsFilmI>,
+    slides: Array<ResultsI>
 }
 
 const initialState: PageI = {
@@ -69,7 +70,8 @@ const initialState: PageI = {
     results: [],
     total_results: null,
     total_pages: null,
-    details: []
+    details: [],
+    slides: []
 }
 
 /**/ 
@@ -96,7 +98,6 @@ export const fetchFilms = createAsyncThunk<PageResponseI, {page:number}, { rejec
             return rejectWithValue('oops')
         }
         const data = await response.json();
-        console.log(data);
         return data;
     }
 );
@@ -132,6 +133,9 @@ const FilmsSlice = createSlice({
             if(action.payload.results){
                 for(let i=0; i<action.payload.results?.length; i++){
                     state.details.push({id_film: action.payload.results[i].id, videos: []});
+                    if(i <= 3 && state.slides.length < 4){
+                        state.slides.push(action.payload.results[i]);
+                    }
                 }
             }
         })
