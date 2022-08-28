@@ -32,7 +32,7 @@ const MovieItem: React.FC<FilmItemI> = ({ params }) => {
     const dispatch = useAppDispatch();
     const id = params.id;
 
-    return <Col style={{ marginBottom: '20px' }} key={params.id} xs={{ span: 12 }} sm={{ span: 8 }} md={{ span: 6 }} lg={{ span: 4 }}>
+    return <Col style={{ marginBottom: '20px' }} key={params.id} xs={{ span: 12 }} sm={{ span: 8 }} md={{ span: 6 }} xl={{ span: 4 }}>
         <Card
             hoverable
             cover={<img alt="text" src={`${large_logo}${params.poster_path}`} />}
