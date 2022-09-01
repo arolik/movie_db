@@ -7,7 +7,6 @@ import MovieSliderItem from "./MovieSliderItem";
 const MovieSlider: React.FC = () => {
 
     const sliderItems = useAppSelector(state => state.films.slides);
-    console.log(sliderItems)
 
     const changeSlide = (currentSlide: number) => {
     }

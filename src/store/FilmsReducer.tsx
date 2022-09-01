@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { API_KEY, mainpath } from "../path/pathes";
+import { API_KEY, find_movie, mainpath } from "../path/pathes";
 
 interface ResultsI {
     poster_path: string | null,
@@ -25,7 +25,7 @@ interface PageResponseI {
     total_pages: number | null,
 }
 
-/**/
+/* trailer info interfaces */
 
 interface TrailerItemI {
     iso_639_1: string,
@@ -54,7 +54,7 @@ interface GenreI {
     name: string
 }
 
-/**/ 
+/* initial state interfaces */ 
 
 interface PageI {
     page: number | null,
@@ -62,7 +62,9 @@ interface PageI {
     total_results: number | null,
     total_pages: number | null,
     details: Array<DetailsFilmI>,
-    slides: Array<ResultsI>
+    slides: Array<ResultsI>,
+    search_results: SearchMovieI,
+    isShowSearchMovies: boolean
 }
 
 const initialState: PageI = {
@@ -71,10 +73,17 @@ const initialState: PageI = {
     total_results: null,
     total_pages: null,
     details: [],
-    slides: []
+    slides: [],
+    search_results: {
+        page: null,
+        results: [],
+        total_pages: null,
+        total_results: null
+    },
+    isShowSearchMovies: false
 }
 
-/**/ 
+/* film item info interface */ 
 
 interface FetchDeatailsFilmI {
     id: number,
@@ -87,7 +96,33 @@ interface FetchDeatailsFilmI {
     runtime: number
 }
 
-/**/ 
+/* search movie interface */
+
+interface SearchMovieI {
+    page: number | null,
+    results: Array<SearchMovieItemI>,
+    total_pages: number | null,
+    total_results: number | null
+}
+
+interface SearchMovieItemI {
+    adult: boolean,
+    backdrop_path: string,
+    genre_ids: Array<number>,
+    id: number,
+    original_language: string,
+    original_title: string,
+    overview: string,
+    popularity: number,
+    poster_path: string,
+    release_date: string,
+    title: string,
+    video: boolean,
+    vote_average: number,
+    vote_count: number
+}
+
+/* */ 
 
 export const fetchFilms = createAsyncThunk<PageResponseI, {page:number}, { rejectValue: string }>(
     'films/fetchFilms',
@@ -115,6 +150,18 @@ export const fetchMovieInfo = createAsyncThunk<FetchDeatailsFilmI, {id:number}, 
         return data as FetchDeatailsFilmI;
     }
 );
+
+export const fetchSearchMovie = createAsyncThunk <SearchMovieI, {searchText: string}, {rejectValue: string}> (
+    'films/fetchSearchMovie',
+    async function({searchText},{rejectWithValue}){
+        const response = await fetch(`${find_movie}&language=en-US&query=${searchText}&page=1&include_adult=false`);
+        if(!response.ok){
+            return rejectWithValue('oops can not find movie')
+        }
+        return await response.json() as SearchMovieI ;
+        
+    }
+)
     
 const FilmsSlice = createSlice({
     name: 'films',
@@ -138,6 +185,7 @@ const FilmsSlice = createSlice({
                     }
                 }
             }
+            state.isShowSearchMovies = false;
         })
         .addCase(fetchMovieInfo.fulfilled, (state, action) => {
             for(let i=0; i<state.details.length; i++){
@@ -148,8 +196,14 @@ const FilmsSlice = createSlice({
                     state.details[i].backdrop_path = action.payload.backdrop_path;
                     state.details[i].runtime = action.payload.runtime;
                 }
-            }
-            
+            }  
+        })
+        .addCase(fetchSearchMovie.fulfilled, (state, action) => {
+            state.search_results.page = action.payload.page;
+            state.search_results.total_pages = action.payload.total_pages;
+            state.search_results.total_results = action.payload.total_results;
+            state.search_results.results = action.payload.results;
+            state.isShowSearchMovies = true;
         })
     }
 })

@@ -32,6 +32,7 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
     const dispatch = useAppDispatch();
     const [showModal, setShowModal] = useState(false);
     const [trailerId, setTrailerId] = useState('');
+    const [playTrailer, setPalyTrailer] = useState(false);
     const movie = useAppSelector(state => state.films.details.find((t) => {
         return t.id_film === info.id;
     }));
@@ -56,6 +57,12 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
         }
     };
 
+    function showTrailer () {
+        setPalyTrailer(true);
+    }
+
+    
+
     return (
         <>
             <p><Text type="secondary">Release date: </Text><Text type="success">{info.release_date}</Text></p>
@@ -65,7 +72,8 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
                     <Button style={{ marginBottom: '20px' }} type="primary" onClick={findTrailer} >show trailer</Button>
                     <Row justify="space-between">
                         <Col xs={{ span: 24 }} lg={{ span: 16 }} span={16} >
-                            <YouTube videoId={trailerId} style={{ width: '100%', height: '100%' }} iframeClassName={'youtube_container'} />
+                            <YouTube videoId={trailerId} style={{ width: '100%', height: '100%' }} 
+                            iframeClassName={'youtube_container'}   />
                         </Col>
                         <Col xs={{ span: 24 }} lg={{ span: 7 }} span={7} >
                             <Title level={4}>{info.title}</Title>
