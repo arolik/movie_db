@@ -1,16 +1,24 @@
+import { Card, Col } from "antd";
+import Meta from "antd/lib/card/Meta";
+import { large_logo } from "../path/pathes";
+import MovieItemDescription from "./MovieItemDescription";
+import { FilmItemI } from './interfaces'
 
-interface FoundFilmI {
-    id: number,
-    original_title: string
-}
 
-const FoundFilms: React.FC<FoundFilmI> = ({id, original_title}) => {
+
+
+const FoundFilms: React.FC<FilmItemI> = ({ params }) => {
 
     return (
-        <div>
-            <p>{id}</p>
-            <p>{original_title}</p>
-        </div>
+
+        <Col style={{ marginBottom: '20px' }} xs={{ span: 12 }} sm={{ span: 8 }} md={{ span: 6 }} xl={{ span: 4 }}>
+            <Card
+                hoverable
+                cover={<img alt="text" src={`${large_logo}${params.poster_path}`} />}
+            >
+            <Meta title={params.original_title} description={<MovieItemDescription params={params} />} ></Meta> 
+            </Card>
+        </Col>
     )
 }
 

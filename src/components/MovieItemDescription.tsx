@@ -1,42 +1,21 @@
-import { Button, Col, Drawer, DrawerProps, Modal, Row, Space, Typography } from "antd";
+import { Button, Col, Modal, Row, Space, Typography } from "antd";
 import { useEffect, useState } from "react";
 import YouTube from "react-youtube";
-import { API_KEY } from "../path/pathes";
 import { fetchMovieInfo } from "../store/FilmsReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { FilmItemI } from './interfaces'
 const { Text, Title, Paragraph } = Typography;
 
-interface DescriptionI {
-    poster_path: string | null,
-    abult: boolean,
-    overview: string,
-    release_date: string,
-    genre_ids: Array<number>,
-    id: number,
-    original_title: string,
-    original_language: string,
-    title: string,
-    backdrop_path: string | null,
-    popularity: number,
-    vote_count: number,
-    video: boolean,
-    vote_average: number
-}
-
-interface InfoMovieI {
-    info: DescriptionI
-}
-
-const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
+const MovieItemDescription: React.FC<FilmItemI> = ({ params }) => {
 
     const dispatch = useAppDispatch();
     const [showModal, setShowModal] = useState(false);
     const [trailerId, setTrailerId] = useState('');
     const [playTrailer, setPalyTrailer] = useState(false);
     const movie = useAppSelector(state => state.films.details.find((t) => {
-        return t.id_film === info.id;
+        return t.id_film === params.id;
     }));
-    const id = info.id;
+    const id = params.id;
 
     useEffect(() => {
         dispatch(fetchMovieInfo({ id }))
@@ -61,14 +40,12 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
         setPalyTrailer(true);
     }
 
-    
-
     return (
         <>
-            <p><Text type="secondary">Release date: </Text><Text type="success">{info.release_date}</Text></p>
+            <p><Text type="secondary">Release date: </Text><Text type="success">{params.release_date}</Text></p>
             <Space>
                 <Button type="primary" shape="round" onClick={showInfo} >show details</Button>
-                <Modal className="movie_modal" title={info.title} visible={showModal} onOk={closeInfo} onCancel={closeInfo} width={'auto'}>
+                <Modal className="movie_modal" title={params.title} visible={showModal} onOk={closeInfo} onCancel={closeInfo} width={'auto'}>
                     <Button style={{ marginBottom: '20px' }} type="primary" onClick={findTrailer} >show trailer</Button>
                     <Row justify="space-between">
                         <Col xs={{ span: 24 }} lg={{ span: 16 }} span={16} >
@@ -76,10 +53,10 @@ const MovieItemDescription: React.FC<InfoMovieI> = ({ info }) => {
                             iframeClassName={'youtube_container'}   />
                         </Col>
                         <Col xs={{ span: 24 }} lg={{ span: 7 }} span={7} >
-                            <Title level={4}>{info.title}</Title>
-                            <Paragraph><Text type="secondary">Original title: </Text><Text style={{ marginTop: '0.5rem' }} >{info.original_title}</Text></Paragraph>
-                            <Paragraph><Text type="secondary" >Release Date: </Text><Text>{info.release_date}</Text></Paragraph>
-                            <Title style={{ marginTop: '0.5rem' }} level={5} >{info.overview}</Title>
+                            <Title level={4}>{params.title}</Title>
+                            <Paragraph><Text type="secondary">Original title: </Text><Text style={{ marginTop: '0.5rem' }} >{params.original_title}</Text></Paragraph>
+                            <Paragraph><Text type="secondary" >Release Date: </Text><Text>{params.release_date}</Text></Paragraph>
+                            <Title style={{ marginTop: '0.5rem' }} level={5} >{params.overview}</Title>
                             <Paragraph><Text type="secondary" >Budget: </Text><Text>{movie?.budget_film}</Text><Text> millions</Text></Paragraph>
                             <Paragraph><Text type="secondary" >Runtime: </Text><Text>{movie?.runtime}</Text><Text> min</Text></Paragraph>
                         </Col>

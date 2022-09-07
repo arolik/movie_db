@@ -20,6 +20,8 @@ function App() {
   const found_movie = useAppSelector(state => state.films.isShowSearchMovies);
   const [page, setPage] = useState(1);
 
+  console.log(found_movie)
+
   useEffect(() => {
     dispatch(fetchFilms({ page }));
   }, [dispatch]);
@@ -44,10 +46,42 @@ function App() {
       <MovieSlider />
       <Col xs={{span:24, offset:0}} sm={{span:12, offset:12}} lg={{span:8, offset:16}} >
             <Row align='middle'>
-            <Search enterButton="Search" onSearch={searchMovie}  allowClear ></Search>
+            <Search enterButton="Search" onSearch={searchMovie} style={{marginBottom:'1rem'}} allowClear ></Search>
             </Row>
           </Col>
-      <Tabs defaultActiveKey='1' onChange={changeTabs} onTabClick={() => { dispatch(fetchFilms({ page })) }} >
+          {
+            found_movie 
+            ?
+            <Row justify='space-between' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
+              {search_results.map((film) => { return <FoundFilms key={film.id} params={film} /> })}
+            </Row> 
+            :
+            <Tabs defaultActiveKey='1' onChange={changeTabs} onTabClick={() => { dispatch(fetchFilms({ page })) }} >
+            <TabPane tab="Popular movies" key="1">
+              {total_pages ?
+                <Pagination current={page} onChange={changePage} total={total_pages} ></Pagination> :
+                <Pagination current={page} onChange={changePage} total={50} ></Pagination>
+              }
+              
+              <Content className='movie_content' >
+                <Row justify='space-between' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
+                    {catalog?.map((film) => { return <MovieItem key={film.id} params={film} /> })}
+                </Row>
+              </Content>
+            </TabPane>
+            
+            <TabPane tab="Tab 1" key="2">
+              text 2
+            </TabPane>
+          </Tabs>
+          }
+
+
+
+
+
+
+      {/* <Tabs defaultActiveKey='1' onChange={changeTabs} onTabClick={() => { dispatch(fetchFilms({ page })) }} >
         <TabPane tab="Popular movies" key="1">
           {total_pages ?
             <Pagination current={page} onChange={changePage} total={total_pages} ></Pagination> :
@@ -68,7 +102,7 @@ function App() {
         <TabPane tab="Tab 1" key="2">
           text 2
         </TabPane>
-      </Tabs>
+      </Tabs> */}
     </Col>
   );
 }
