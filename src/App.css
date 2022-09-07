@@ -1,7 +1,7 @@
 
 .movie_header {
     height: auto;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .movie_content {
@@ -9,7 +9,6 @@
 }
 
 .movie_slide {
-    
    height: 500px;
    background-size: cover;
    background-position: center center;

@@ -159,9 +159,8 @@ export const fetchSearchMovie = createAsyncThunk <SearchMovieI, {searchText: str
             return rejectWithValue('oops can not find movie')
         }
         return await response.json() as SearchMovieI ;
-        
     }
-)
+);
     
 const FilmsSlice = createSlice({
     name: 'films',
