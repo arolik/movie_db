@@ -63,8 +63,10 @@ interface PageI {
     total_pages: number | null,
     details: Array<DetailsFilmI>,
     slides: Array<ResultsI>,
+    search_text: string,
     search_results: SearchMovieI,
-    isShowSearchMovies: boolean
+    isShowFoundMovies: boolean,
+    found_movies: Array<DetailsFilmI>
 }
 
 const initialState: PageI = {
@@ -74,13 +76,15 @@ const initialState: PageI = {
     total_pages: null,
     details: [],
     slides: [],
+    search_text: '',
     search_results: {
         page: null,
         results: [],
         total_pages: null,
         total_results: null
     },
-    isShowSearchMovies: false
+    isShowFoundMovies: false,
+    found_movies: []
 }
 
 /* film item info interface */ 
@@ -151,13 +155,14 @@ export const fetchMovieInfo = createAsyncThunk<FetchDeatailsFilmI, {id:number}, 
     }
 );
 
-export const fetchSearchMovie = createAsyncThunk <SearchMovieI, {searchText: string}, {rejectValue: string}> (
+export const fetchSearchMovie = createAsyncThunk <SearchMovieI, {search_text?: string, pageFoundMovies: number}, {rejectValue: string}> (
     'films/fetchSearchMovie',
-    async function({searchText},{rejectWithValue}){
-        const response = await fetch(`${find_movie}&language=en-US&query=${searchText}&page=1&include_adult=false`);
+    async function({search_text, pageFoundMovies},{rejectWithValue, dispatch}){
+        const response = await fetch(`${find_movie}&language=en-US&query=${search_text}&page=${pageFoundMovies}&include_adult=false`);
         if(!response.ok){
             return rejectWithValue('oops can not find movie')
         }
+        dispatch(setText(search_text));
         return await response.json() as SearchMovieI ;
     }
 );
@@ -166,7 +171,8 @@ const FilmsSlice = createSlice({
     name: 'films',
     initialState,
     reducers:{
-        setCatalog(state, action){
+        setText(state, action){
+            state.search_text = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -184,9 +190,10 @@ const FilmsSlice = createSlice({
                     }
                 }
             }
-            state.isShowSearchMovies = false;
+            state.isShowFoundMovies = false;
         })
         .addCase(fetchMovieInfo.fulfilled, (state, action) => {
+            
             for(let i=0; i<state.details.length; i++){
                 if(state.details[i].id_film === action.payload.id){
                     state.details[i].videos = action.payload.videos.results;
@@ -202,12 +209,13 @@ const FilmsSlice = createSlice({
             state.search_results.total_pages = action.payload.total_pages;
             state.search_results.total_results = action.payload.total_results;
             state.search_results.results = action.payload.results;
-            state.isShowSearchMovies = true;
+            state.isShowFoundMovies = true;
+            console.log(action.payload)
         })
     }
 })
 
 
-export const { setCatalog } = FilmsSlice.actions
+export const { setText } = FilmsSlice.actions
 
 export default FilmsSlice.reducer;
