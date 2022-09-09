@@ -166,6 +166,7 @@ export const fetchSearchMovie = createAsyncThunk <SearchMovieI, {search_text?: s
         return await response.json() as SearchMovieI ;
     }
 );
+
     
 const FilmsSlice = createSlice({
     name: 'films',
@@ -193,16 +194,28 @@ const FilmsSlice = createSlice({
             state.isShowFoundMovies = false;
         })
         .addCase(fetchMovieInfo.fulfilled, (state, action) => {
-            
-            for(let i=0; i<state.details.length; i++){
-                if(state.details[i].id_film === action.payload.id){
-                    state.details[i].videos = action.payload.videos.results;
-                    state.details[i].budget_film = action.payload.budget;
-                    state.details[i].genres_film = action.payload.genres;
-                    state.details[i].backdrop_path = action.payload.backdrop_path;
-                    state.details[i].runtime = action.payload.runtime;
+            if(state.isShowFoundMovies){
+                for(let i=0; i<state.found_movies.length; i++){
+                    if(state.found_movies[i].id_film === action.payload.id){
+                        state.found_movies[i].videos = action.payload.videos.results;
+                        state.found_movies[i].budget_film = action.payload.budget;
+                        state.found_movies[i].genres_film = action.payload.genres;
+                        state.found_movies[i].backdrop_path = action.payload.backdrop_path;
+                        state.found_movies[i].runtime = action.payload.runtime;
+                    }
                 }
-            }  
+            } else {
+                for(let i=0; i<state.details.length; i++){
+                    if(state.details[i].id_film === action.payload.id){
+                        state.details[i].videos = action.payload.videos.results;
+                        state.details[i].budget_film = action.payload.budget;
+                        state.details[i].genres_film = action.payload.genres;
+                        state.details[i].backdrop_path = action.payload.backdrop_path;
+                        state.details[i].runtime = action.payload.runtime;
+                    }
+                }
+            }
+                
         })
         .addCase(fetchSearchMovie.fulfilled, (state, action) => {
             state.search_results.page = action.payload.page;
@@ -210,7 +223,11 @@ const FilmsSlice = createSlice({
             state.search_results.total_results = action.payload.total_results;
             state.search_results.results = action.payload.results;
             state.isShowFoundMovies = true;
-            console.log(action.payload)
+            if(action.payload.results){
+                for(let i=0; i<action.payload.results?.length; i++){
+                    state.found_movies.push({id_film: action.payload.results[i].id, videos: []});
+                }
+            }
         })
     }
 })

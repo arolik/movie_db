@@ -21,6 +21,7 @@ function App() {
   const [page, setPage] = useState(1);
   const [pageFoundMovies, setPageFoundMovies] = useState(1);
  
+  
 
   useEffect(() => {
     dispatch(fetchFilms({ page }));
