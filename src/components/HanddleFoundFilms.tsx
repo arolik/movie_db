@@ -14,11 +14,14 @@ const HanddleFoundFilms: React.FC = () => {
     const search_text = useAppSelector(state => state.films.search_text);
     const [pageFoundMovies, setPageFoundMovies] = useState(1);
 
+    const found_movies = useAppSelector(state => state.films.found_movies);
+
+
     const changePage: PaginationProps['onChange'] = page => {
       const pageFoundMovies = page;
       setPageFoundMovies(page);
 
-      dispatch(fetchSearchMovie({search_text, pageFoundMovies}))
+      dispatch(fetchSearchMovie({search_text, pageFoundMovies}));
     }
 
     return (
