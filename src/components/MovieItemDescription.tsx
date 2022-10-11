@@ -53,7 +53,7 @@ const MovieItemDescription: React.FC<FilmItemI> = ({ params }) => {
         <>{
             is_found_movies 
             ? 
-            <> 
+            <>
                 <p><Text type="secondary">Release date: </Text><Text type="success">{params.release_date}</Text></p>
             <Space>
                 <Button type="primary" shape="round" onClick={showInfo} >show details</Button>
