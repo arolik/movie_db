@@ -1,4 +1,4 @@
-# link to gh page - https://arolik.github.io/movie_db/
+link to gh page - https://arolik.github.io/movie_db/
 
 # Getting Started with Create React App
 
