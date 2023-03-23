@@ -67,15 +67,11 @@ function App() {
                 <Pagination current={page} onChange={changePage} total={50} ></Pagination>
               }
 
-              <Content className='movie_content' >
+              <Content className='movie_content aaa' >
                 <Row justify='space-between' gutter={{ xs: 8, sm: 16, md: 22, lg: 32 }} >
                   {catalog?.map((film) => { return <MovieItem key={film.id} params={film} /> })}
                 </Row>
               </Content>
-            </TabPane>
-
-            <TabPane tab="Tab 1" key="2">
-              text 2
             </TabPane>
           </Tabs>
       }
